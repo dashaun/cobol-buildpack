@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+for f in *.cob; do
+  if [ -e "$f" ]; then
+    exit 0
+  else
+    exit 100
+  fi
+done
