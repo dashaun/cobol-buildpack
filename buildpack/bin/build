@@ -11,12 +11,12 @@ wget -qO /tmp/yj https://github.com/sclevine/yj/releases/download/v2.0/yj-linux 
 layersdir=$1
 
 # 2. DOWNLOAD COBOL
-cobol_version=2.2
+cobol_version=3.0-rc1
 cobollayer="$layersdir"/cobol
 mkdir -p "$cobollayer"
 echo "---> Downloading and extracting COBOL"
 
-cobol_url=https://sourceforge.net/projects/open-cobol/files/gnucobol/2.2/gnucobol-2.2.tar.gz
+cobol_url=http://sourceforge.net/projects/open-cobol/files/gnu-cobol/3.0/gnucobol-3.0-rc1.tar.gz
 wget -q -O - "$cobol_url" | tar -xzf - -C "$cobollayer"
 cd "$cobollayer"/gnucobol-"$cobol_version"
 ./configure --without-db
