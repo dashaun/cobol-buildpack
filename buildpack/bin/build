@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+echo "---> COBOL Buildpack"
+
+# 0. DOWNLOAD TOOLS
+wget -qO /tmp/jq https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 && chmod +x /tmp/jq
+wget -qO /tmp/yj https://github.com/sclevine/yj/releases/download/v2.0/yj-linux && chmod +x /tmp/yj
+
+# 1. GET ARGS
+layersdir=$1
+
+# 2. DOWNLOAD COBOL
+cobol_version=3.1-dev
+cobollayer="$layersdir"/cobol
+mkdir -p "$cobollayer"
+echo "---> Downloading and extracting COBOL"
+
+export COB_LD_FLAGS='-Wl, --no-as-needed'
+
+cobol_url=https://ci.appveyor.com/api/projects/GitMensch/gnucobol-3-x/artifacts/gnucobol-3.1-dev.tar.gz?job=Image:%20Ubuntu1804
+wget -q -O - "$cobol_url" | tar -xzf - -C "$cobollayer"
+cd "$cobollayer"/gnucobol-"$cobol_version"
+./configure --without-db --without-curses
+make
+make check
+make install
+ldconfig
+
+# 3. MAKE COBOL AVAILABLE DURING LAUNCH
+echo -e 'launch = true' > "$cobollayer.toml"
+echo -e "launch = true\nmetadata = \"$cobol_version\"" > "$cobollayer.toml"
+
+# 4. MAKE COBOL AVAILABLE TO THIS SCRIPT
+export PATH="$cobollayer"/bin:$PATH
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:+${LD_LIBRARY_PATH}:}"$cobollayer/lib"
+
+# 7. SET DEFAULT START COMMAND
+echo 'processes = [{ type = "web", command = "helloworld"}]' > "$layersdir/launch.toml"
