@@ -1,13 +1,12 @@
 # cobol-buildpack
 
-Cloud native buildpack for GnuCOBOL https://sourceforge.net/projects/open-cobol/
-
-On Docker Hub [dashaun/cobol-buildpack](https://hub.docker.com/r/dashaun/cobol-buildpack)
-
-### Prerequisites
-* [Pack](https://buildpacks.io/docs/install-pack/)
+Cloud native buildpack for GnuCOBOL https://www.gnu.org/software/gnucobol
 
 ## Getting Started
+
+Prerequisites
+
+* [Pack](https://buildpacks.io/docs/install-pack/)
 
 ``` 
 git clone https://github.com/dashaun/cobol-hello-world
@@ -33,6 +32,8 @@ $
 ```
 
 ## Version
+
+On Docker Hub [dashaun/cobol-buildpack](https://hub.docker.com/r/dashaun/cobol-buildpack)
 
 Currently supports GnuCOBOL version 3.1-dev
 
