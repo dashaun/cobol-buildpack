@@ -14,6 +14,22 @@ Currently supports GnuCOBOL version 3.1-dev
 pack build <imagename> --path ./ --buildpack dashaun/cobol-buildpack
 ```
 
+## Package the buildpack
+
+``` 
+$ pack package-buildpack dashaun/cobol-buildpack --package-config package/package.toml
+Successfully created package dashaun/cobol-buildpack
+$
+```
+
+## Publish the buildpack
+
+``` 
+$ pack package-buildpack dashaun/cobol-buildpack --package-config package/package.toml --publish
+Successfully published package dashaun/cobol-buildpack
+$
+```
+
 ### Additional Resources
 
 * [`pack create-builders` documentation](https://buildpacks.io/docs/using-pack/working-with-builders/)

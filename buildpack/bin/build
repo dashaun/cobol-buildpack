@@ -43,7 +43,7 @@ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:+${LD_LIBRARY_PATH}:}"$cobollayer/lib"
 #echo "---> PATH $PATH"
 #echo "---> cobc -free -v -x main.cob"
 
-cobc -free -v -x main.cob
+cobc -free -x main.cob
 
 # 7. SET DEFAULT START COMMAND
 echo 'processes = [{ type = "web", command = "./main"}]' > "$layersdir/launch.toml"
