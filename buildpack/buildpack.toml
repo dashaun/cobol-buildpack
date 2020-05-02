@@ -3,14 +3,9 @@ api = "0.2"
 
 # Buildpack ID and metadata
 [buildpack]
-id = "io.dashaun.buildpacks.cobol"
+id = "io.dashaun.cnb.buildpack.cobol"
 version = "0.0.1"
 name = "COBOL Buildpack"
 
-# Preferred stack
 [[stacks]]
-id = "org.cloudfoundry.stacks.cflinuxfs3"
-
-# Untested stack
-[[stacks]]
-id = "heroku-18"
+id = "io.dashaun.cnb.stack.bionic"

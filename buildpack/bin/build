@@ -2,38 +2,48 @@
 set -eo pipefail
 
 echo "---> COBOL Buildpack"
-
-# 0. DOWNLOAD TOOLS
-wget -qO /tmp/jq https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 && chmod +x /tmp/jq
-wget -qO /tmp/yj https://github.com/sclevine/yj/releases/download/v2.0/yj-linux && chmod +x /tmp/yj
-
+echo "---> PWD $PWD"
+homedir=$PWD
 # 1. GET ARGS
 layersdir=$1
 
 # 2. DOWNLOAD COBOL
 cobol_version=3.1-dev
+echo "---> cobol_version=$cobol_version"
 cobollayer="$layersdir"/cobol
 mkdir -p "$cobollayer"
-echo "---> Downloading and extracting COBOL"
 
-export COB_LD_FLAGS='-Wl, --no-as-needed'
+if [[ -f $cobollayer.toml ]]; then
+    echo "---> Version $cobol_version already exists"
+else
+    cobol_url=https://ci.appveyor.com/api/projects/GitMensch/gnucobol-3-x/artifacts/gnucobol-3.1-dev.tar.gz?job=Image:%20Ubuntu1804
+    wget -q -O - "$cobol_url" | tar -xzf - -C "$cobollayer"
+    cd "$cobollayer"/gnucobol-"$cobol_version"
+    ./configure --without-db --without-curses --prefix=$cobollayer LDFLAGS=-L$cobollayer/lib CPPFLAGS=-I$cobollayer/include
+    make >/dev/null || make
+    make check >/dev/null || make check
+    make install >/dev/null || makemake install
+    #echo "---> LDCONFIG"
+    ldconfig -C $cobollayer/cache
 
-cobol_url=https://ci.appveyor.com/api/projects/GitMensch/gnucobol-3-x/artifacts/gnucobol-3.1-dev.tar.gz?job=Image:%20Ubuntu1804
-wget -q -O - "$cobol_url" | tar -xzf - -C "$cobollayer"
-cd "$cobollayer"/gnucobol-"$cobol_version"
-./configure --without-db --without-curses
-make
-make check
-make install
-ldconfig
+    #echo "---> Create $cobollayer.toml"
+    echo -e "cache = true\nlaunch = true\nmetadata = \"$cobol_version\"" > "$cobollayer.toml"
 
-# 3. MAKE COBOL AVAILABLE DURING LAUNCH
-echo -e 'launch = true' > "$cobollayer.toml"
-echo -e "launch = true\nmetadata = \"$cobol_version\"" > "$cobollayer.toml"
+    #echo "---> Compile the main.cob executable"
+    cd "$homedir"
+fi
 
-# 4. MAKE COBOL AVAILABLE TO THIS SCRIPT
-export PATH="$cobollayer"/bin:$PATH
+echo "---> ADD $homedir:$cobollayer/bin to PATH"
+export PATH="$homedir:$cobollayer/bin":$PATH
+#echo "---> ADD $cobollayer/lib to LD_LIBRARY_PATH"
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:+${LD_LIBRARY_PATH}:}"$cobollayer/lib"
 
+#echo "---> PWD $PWD"
+#echo "---> ls $(ls $cobollayer/bin/)"
+#echo "---> PATH $PATH"
+#echo "---> cobc -free -v -x main.cob"
+
+cobc -free -v -x main.cob
+
 # 7. SET DEFAULT START COMMAND
-echo 'processes = [{ type = "web", command = "helloworld"}]' > "$layersdir/launch.toml"
+echo 'processes = [{ type = "web", command = "./main"}]' > "$layersdir/launch.toml"
