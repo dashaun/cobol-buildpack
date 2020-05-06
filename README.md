@@ -22,6 +22,7 @@ pack set-default-builder dashaun/cnb-buildpack:bionic
 pack build helloworld --path ./
 docker run -it helloworld
 ```
+You just compiled cobol using a cloud native buildpack, and created a docker image to run the cobol!
 
 ## Package the buildpack
 
