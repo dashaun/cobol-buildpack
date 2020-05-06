@@ -6,12 +6,20 @@ Cloud native buildpack for GnuCOBOL https://www.gnu.org/software/gnucobol
 
 Prerequisites
 
+* [Docker](https://www.docker.com/)
 * [Pack](https://buildpacks.io/docs/install-pack/)
 
+Make sure you have docker and pack running:
+```
+$ docker run hello-world
+$ pack --version
+```
+Grab some sample cobol and set a builder that uses this cobol-buildpack:
 ``` 
 git clone https://github.com/dashaun/cobol-hello-world
 cd cobol-hello-world
-pack build helloworld --path ./ --buildpack dashaun/cobol-buildpack
+pack set-default-builder dashaun/cnb-buildpack:bionic
+pack build helloworld --path ./
 docker run -it helloworld
 ```
 
