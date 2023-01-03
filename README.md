@@ -1,5 +1,7 @@
 # cobol-buildpack
 
+![Cobol Logo](img/cobol.png)
+
 Cloud native buildpack for GnuCOBOL https://www.gnu.org/software/gnucobol
 
 ## Getting Started
